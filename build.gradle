@@ -8,6 +8,8 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleToolsVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        classpath "com.yangyang.mobile.test.myplugin:testplugin:1.0.0"
     }
 
     repositories {
@@ -27,5 +29,9 @@ buildscript {
         maven { url "https://developer.huawei.com/repo/" }
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
+
+        maven {
+            url "./repos"
+        }
     }
 }

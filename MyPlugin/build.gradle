@@ -1,0 +1,40 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'com.android.tools.build:gradle:7.3.0'
+}
+
+gradlePlugin {
+    plugins {
+        DependenciesPlugin {
+            id = 'com.yangyang.mobile.test.myplugin.testplugin'
+            implementationClass = 'com.yangyang.mobile.test.myplugin.TestPlugin'
+        }
+    }
+}
+
+group 'com.yangyang.mobile.test.myplugin'
+version '1.0.0'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = "testplugin"
+
+            version = version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "../repos"
+        }
+    }
+}
