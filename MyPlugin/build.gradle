@@ -6,6 +6,12 @@ plugins {
 dependencies {
     implementation gradleApi()
     implementation 'com.android.tools.build:gradle:7.3.0'
+
+    implementation 'org.ow2.asm:asm:9.1'
+    implementation 'org.ow2.asm:asm-util:9.1'
+    implementation 'org.ow2.asm:asm-commons:9.1'
+
+    implementation 'commons-io:commons-io:2.16.1'
 }
 
 gradlePlugin {
@@ -18,7 +24,7 @@ gradlePlugin {
 }
 
 group 'com.yangyang.mobile.test.myplugin'
-version '1.0.0'
+version '1.0.1'
 
 publishing {
     publications {
