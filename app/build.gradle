@@ -2,7 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 
-    id 'com.yangyang.mobile.test.myplugin.testplugin'
+    //id 'com.yangyang.mobile.test.myplugin.testplugin'
+    id 'com.yangyang.mobile.test.myplugin2.testplugin'
 }
 
 android {

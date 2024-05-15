@@ -1,0 +1,47 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'kotlin'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'com.android.tools.build:gradle:7.3.0'
+
+    implementation 'org.ow2.asm:asm:9.1'
+    implementation 'org.ow2.asm:asm-util:9.1'
+    implementation 'org.ow2.asm:asm-commons:9.1'
+
+    implementation 'commons-io:commons-io:2.16.1'
+}
+
+gradlePlugin {
+    plugins {
+        DependenciesPlugin {
+            id = 'com.yangyang.mobile.test.myplugin2.testplugin'
+            implementationClass = 'com.yangyang.mobile.test.myplugin2.TestPlugin'
+        }
+    }
+}
+
+group 'com.yangyang.mobile.test.myplugin2'
+version '1.0.1'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = "testplugin"
+
+            version = version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "../repos"
+        }
+    }
+}

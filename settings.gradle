@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "TestPluginApp"
 include ':app'
 include ':MyPlugin'
+include ':MyPlugin2'
