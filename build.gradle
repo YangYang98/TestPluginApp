@@ -11,6 +11,8 @@ buildscript {
 
         classpath "com.yangyang.mobile.test.myplugin:testplugin:1.0.1"
         classpath "com.yangyang.mobile.test.myplugin2:testplugin:1.0.1"
+
+        classpath "com.yangyang.mobile.test.myplugin3:mkanalyticsplugin:1.0.0"
     }
 
     repositories {
