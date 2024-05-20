@@ -1,0 +1,51 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'groovy'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:7.3.0'
+
+    implementation 'org.ow2.asm:asm:9.1'
+    implementation 'org.ow2.asm:asm-util:9.1'
+    implementation 'org.ow2.asm:asm-commons:9.1'
+
+    implementation 'commons-io:commons-io:2.16.1'
+    implementation 'commons-codec:commons-codec:1.17.0'
+}
+
+gradlePlugin {
+    plugins {
+        DependenciesPlugin {
+            id = 'com.yangyang.mobile.test.myplugin4.testaopasm'
+            implementationClass = 'com.yangyang.mobile.test.myplugin4.TestAopAsmPlugin'
+        }
+    }
+}
+
+group 'com.yangyang.mobile.test.myplugin4'
+version '1.0.0'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = "testaopasm"
+
+            version = version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "../repos"
+        }
+    }
+}
