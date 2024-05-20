@@ -94,27 +94,33 @@ class MkAnalyticsTransform extends Transform{
             }
 
             input.jarInputs.each {JarInput jarInput ->
-                String destName = jarInput.file.name
-
-                /**截取文件路径的 md5 值重命名输出文件,因为可能同名,会覆盖*/
-                def hexName = DigestUtils.md5Hex(jarInput.file.absolutePath).substring(0, 8)
-                /** 获取 jar 名字*/
-                if (destName.endsWith(".jar")) {
-                    destName = destName.substring(0, destName.length() - 4)
-                }
-
-                File dest = outputProvider.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-                def modifiedJar = null
-                if (!sensorsAnalyticsExtension.disableAppClick) {
-                    modifiedJar = MkAnalyticsClassModifier.modifyJar(jarInput.file, context.getTemporaryDir(), true)
-                }
-
-                if (modifiedJar == null) {
-                    modifiedJar = jarInput.file
-                }
-
-                FileUtils.copyFile(modifiedJar, dest)
+                handleJarInput(context, jarInput, outputProvider)
             }
         }
     }
+
+    void handleJarInput(Context context, JarInput jarInput, TransformOutputProvider outputProvider) {
+        String destName = jarInput.file.name
+
+        /**截取文件路径的 md5 值重命名输出文件,因为可能同名,会覆盖*/
+        def hexName = DigestUtils.md5Hex(jarInput.file.absolutePath).substring(0, 8)
+        /** 获取 jar 名字*/
+        if (destName.endsWith(".jar")) {
+            destName = destName.substring(0, destName.length() - 4)
+        }
+
+        File dest = outputProvider.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+        def modifiedJar = null
+        if (!sensorsAnalyticsExtension.disableAppClick) {
+            modifiedJar = MkAnalyticsClassModifier.modifyJar(jarInput.file, context.getTemporaryDir(), true)
+        }
+
+        if (modifiedJar == null) {
+            modifiedJar = jarInput.file
+        }
+
+        FileUtils.copyFile(modifiedJar, dest)
+    }
+
+
 }

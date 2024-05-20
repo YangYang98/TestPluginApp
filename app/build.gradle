@@ -4,8 +4,8 @@ plugins {
 
     //id 'com.yangyang.mobile.test.myplugin.testplugin'
     //id 'com.yangyang.mobile.test.myplugin2.testplugin'
-    //id 'com.yangyang.mobile.test.myplugin3.mkanalyticsplugin'
-    id 'com.yangyang.mobile.test.myplugin4.testaopasm'
+    id 'com.yangyang.mobile.test.myplugin3.mkanalyticsplugin'
+    //id 'com.yangyang.mobile.test.myplugin4.testaopasm'
 }
 
 android {
