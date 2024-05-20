@@ -41,6 +41,11 @@ class MkAnalyticsClassModifier {
             }
         }
 
+        // 过滤.class文件6: 不是.class后缀的文件，如：META-INF/
+        if (!className.endsWith(".class")) {
+            return false
+        }
+
         // 过滤.class文件3: R.class 及其子类
         if (className.contains('R$') ||
                 // 过滤.class文件4: R2.class 及其子类

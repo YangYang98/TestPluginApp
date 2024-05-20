@@ -15,6 +15,15 @@ import groovy.io.FileType
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import org.apache.commons.io.IOUtils
+
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.jar.JarOutputStream
+import java.util.zip.ZipEntry
 
 
 class MkAnalyticsTransform extends Transform{
@@ -94,7 +103,8 @@ class MkAnalyticsTransform extends Transform{
             }
 
             input.jarInputs.each {JarInput jarInput ->
-                handleJarInput(context, jarInput, outputProvider)
+                //handleJarInput(context, jarInput, outputProvider)
+                handleJarInput(jarInput, outputProvider)
             }
         }
     }
@@ -122,5 +132,49 @@ class MkAnalyticsTransform extends Transform{
         FileUtils.copyFile(modifiedJar, dest)
     }
 
+    void handleJarInput(JarInput jarInput, TransformOutputProvider outputProvider) {
+        if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
+            //重命名输出文件,因为可能同名,会覆盖
+            def jarName = jarInput.name
+            def md5Name = DigestUtils.md5Hex(jarInput.file.absolutePath)
+            if (jarName.endsWith(".jar")) {
+                jarName = jarName.substring(0, jarName.length() - 4)
+            }
+            JarFile jarFile = new JarFile(jarInput.file)
+            Enumeration enumeration = jarFile.entries()
+            File tempFile = new File(jarInput.file.parent + File.separator + "temp.jar")
+            //避免上次的缓存被重复插入
+            if (tempFile.exists()) {
+                tempFile.delete()
+            }
+            JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(tempFile))
+            //保存
+            while (enumeration.hasMoreElements()) {
+                JarEntry jarEntry = enumeration.nextElement()
+                String entryName = jarEntry.name
+                ZipEntry zipEntry = new ZipEntry(entryName)
+                InputStream inputStream = jarFile.getInputStream(zipEntry)
+                if (MkAnalyticsClassModifier.isShouldModify(entryName)) {
+                    //println(Const.TAG + "      entryName:" + entryName)
+                    jarOutputStream.putNextEntry(zipEntry)
+                    ClassReader classReader = new ClassReader(IOUtils.toByteArray(inputStream))
+                    ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                    ClassVisitor classVisitor = new MkAnalyticsClassVisitor(classWriter)
+                    classReader.accept(classVisitor, ClassReader.EXPAND_FRAMES)
+                    byte[] bytes = classWriter.toByteArray()
+                    jarOutputStream.write(bytes)
+                } else {
+                    jarOutputStream.putNextEntry(zipEntry)
+                    jarOutputStream.write(IOUtils.toByteArray(inputStream))
+                }
+                jarOutputStream.closeEntry()
+            }
 
+            jarOutputStream.close()
+            jarFile.close()
+            def dest = outputProvider.getContentLocation(jarName + "_" + md5Name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+            FileUtils.copyFile(tempFile, dest)
+            tempFile.delete()
+        }
+    }
 }

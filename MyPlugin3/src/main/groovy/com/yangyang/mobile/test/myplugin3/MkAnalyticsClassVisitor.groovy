@@ -173,6 +173,11 @@ class MkAnalyticsClassVisitor extends ClassVisitor implements Opcodes {
             @Override
             protected void onMethodExit(int opcode) {
                 super.onMethodExit(opcode)
+
+                mv.visitLdcInsn("\u9000\u51fa\u65b9\u6cd5");
+                mv.visitLdcInsn("\u5411\u6240\u6709\u7684\u5feb\u4e50\u8bf4\u55e8\u55e8" + nameDesc);
+                mv.visitMethodInsn(INVOKESTATIC, "android/util/Log", "i", "(Ljava/lang/String;Ljava/lang/String;)I", false);
+                mv.visitInsn(POP);
             }
 
             @Override
